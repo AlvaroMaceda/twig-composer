@@ -1,0 +1,12 @@
+{
+    "name": "maceda/twig-composer",
+    "require": {
+        "twig/twig": "^1.27"
+    },
+    "authors": [
+        {
+            "name": "Alvaro Maceda",
+            "email": "alvaro@alvaromaceda.es"
+        }
+    ]
+}
