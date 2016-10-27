@@ -6,14 +6,14 @@ use TwigComposer\TwigComposer;
 class TwigComposerTest extends \PHPUnit_Framework_TestCase
 {
     protected $twig;
+    protected $objectWithCallback;
 
-    public function setUp()
+    protected function configureTwig()
     {
-        parent::setUp();
-
         $loader1 = new \Twig_Loader_Array(array(
             'base' => '{% block content %}{% endblock %}',
         ));
+
         $loader2 = new \Twig_Loader_Array(array(
             'index' => '{% extends "base.html" %}{% block content %}Hello {{ name }}{% endblock %}',
             'base'  => 'Will never be loaded',
@@ -21,7 +21,6 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
 
         $loader = new \Twig_Loader_Chain(array($loader1, $loader2));
 
-        // Twig as renderer
         $this->twig = new \Twig_Environment(
             $loader,
             array(
@@ -29,6 +28,17 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
                 'base_template_class' => 'TwigComposer\TwigComposer',
                 'cache' => 'tests/twig_tmp',
             ));
+    }
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->configureTwig();
+
+        $this->objectWithCallback = $this->getMockBuilder('stdClass')
+            ->setMethods(['callBack'])
+            ->getMock();
     }
 
     public function testTrueIsTrue()
@@ -47,4 +57,28 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     {
         $this->twig->render('base');
     }
+
+    /**
+     * @param string $template Template to be rendered
+     * @param string $callable Callable to be called
+     *
+     * @dataProvider providerTestAMethodIsCalledWhenTemplateRendered
+     */
+    public function testAMethodIsCalledWhenTemplateRendered($template,$callable)
+    {
+        $this->objectWithCallback ->expects($this->once())
+            ->method('callBack')
+            ->will($this->returnValue(true));
+
+        //$this->objectWithCallback->callBack();
+        $this->twig->render($template);
+    }
+
+    public function providerTestAMethodIsCalledWhenTemplateRendered()
+    {
+        return array(
+            array('base',array($this,'foo'))
+        );
+    }
+
 }
