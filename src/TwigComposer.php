@@ -4,19 +4,15 @@ namespace TwigComposer;
 
 class TwigComposer extends \Twig_Template
 {
-//    public function render(array $context)
-//    {
-//        //vendor/laravel/framework/src/Illuminate/Events/Dispatcher.php tiene un dispatcher
-//        $debug = var_export($context, true);
-//        $trace = '<h1>OLA K ASE</h1>'.$debug."<br>".get_class($this)."<br>".$this->getTemplateName();
-//        $trace .= "<pre>".var_export($this->env->getLoader(), true)."</pre>";
-//        $trace .= "<pre>".var_export($this->env->getLoader()->getPaths('test1'), true)."</pre>";
-//        return str_replace(
-//            "</body>",
-//            $trace."\n</body>",
-//            parent::render($context)
-//        );
-//    }
+
+    public static $callable;
+
+    public function render(array $context)
+    {
+        $callable = self::$callable;
+        if($callable) call_user_func($callable);
+        return parent::render($context);
+    }
 
 
     // Never called: it's overriden in child-generated classes and

@@ -6,7 +6,6 @@ use TwigComposer\TwigComposer;
 class TwigComposerTest extends \PHPUnit_Framework_TestCase
 {
     protected $twig;
-    protected $objectWithCallback;
 
     protected function configureTwig()
     {
@@ -15,7 +14,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         ));
 
         $loader2 = new \Twig_Loader_Array(array(
-            'index' => '{% extends "base.html" %}{% block content %}Hello {{ name }}{% endblock %}',
+            'index' => '{% extends "base" %}{% block content %}Hello {{ name }}{% endblock %}',
             'base'  => 'Will never be loaded',
         ));
 
@@ -30,15 +29,19 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
             ));
     }
 
+    protected function createObjectWithMockMethods($methods)
+    {
+        $defaultmethods = ['callBack','anotherCallBack'];
+        return $this->getMockBuilder('stdClass')
+            ->setMethods($methods ?: $defaultmethods)
+            ->getMock();
+    }
+
     public function setUp()
     {
         parent::setUp();
 
         $this->configureTwig();
-
-        $this->objectWithCallback = $this->getMockBuilder('stdClass')
-            ->setMethods(['callBack'])
-            ->getMock();
     }
 
     public function testTrueIsTrue()
@@ -60,24 +63,49 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $template Template to be rendered
-     * @param string $callable Callable to be called
      *
-     * @dataProvider providerTestAMethodIsCalledWhenTemplateRendered
+     * @dataProvider providerTemplateList
      */
-    public function testAMethodIsCalledWhenTemplateRendered($template,$callable)
+    public function testAMethodIsNotCalledWhenNotConfigured($template)
     {
-        $this->objectWithCallback ->expects($this->once())
-            ->method('callBack')
-            ->will($this->returnValue(true));
+        $objectWithCallback = $this->createObjectWithMockMethods(['callBack']);
 
-        //$this->objectWithCallback->callBack();
+        $objectWithCallback->expects($this->never())
+            ->method('callBack');
+
+        $this->twig->render($template);
+    }
+
+    /**
+     * @param string $template Template to be rendered
+     *
+     * @dataProvider providerTemplateList
+     */
+    public function testAMethodIsCalledWhenTemplateRendered($template)
+    {
+        $objectWithCallback = $this->createObjectWithMockMethods(['callBack']);
+
+        TwigComposer::$callable = [$objectWithCallback,'callBack'];
+
+        $objectWithCallback->expects($this->once())
+            ->method('callBack');
+
         $this->twig->render($template);
     }
 
     public function providerTestAMethodIsCalledWhenTemplateRendered()
     {
         return array(
-            array('base',array($this,'foo'))
+            array('base'),
+            array('index')
+        );
+    }
+
+    public function providerTemplateList()
+    {
+        return array(
+            //array('base'),
+            array('index')
         );
     }
 
