@@ -18,14 +18,21 @@ class TwigComposer extends \Twig_Template
 //        );
 //    }
 
+
     // Never called: it's overriden in child-generated classes and
     // the override method does not call parent's
+    /**
+     * @codeCoverageIgnore
+     */
     public function getTemplateName()
     {
     }
 
     // Never called: it's overriden in child-generated classes and
     // the override method does not call parent's
+    /**
+     * @codeCoverageIgnore
+     */
     protected function doDisplay(array $context, array $blocks = array())
     {
     }
