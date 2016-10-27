@@ -1,4 +1,6 @@
 /vendor/
+/coverage/
+/tests/twig_tmp/
 
 # Gitignore for PHPStorm
 .idea/
