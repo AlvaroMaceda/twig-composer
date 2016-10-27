@@ -4,6 +4,8 @@ namespace TwigComposer;
 
 class TwigComposer extends \Twig_Template
 {
+    use \Nekoo\EventEmitter;
+    //use \EventEmitter;
 
     public static $callable;
 

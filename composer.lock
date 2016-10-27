@@ -4,9 +4,25 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "052ac1f7f6afdd53445ebcd7717f4acc",
-    "content-hash": "557edf3546ba0974776c86f51b6af858",
+    "hash": "886a8297a43efb8cb619594b6e9e7efe",
+    "content-hash": "15bd49b808517c81e99fa77fc6c435ae",
     "packages": [
+        {
+            "name": "christopherobin/EventEmitter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/christopherobin/EventEmitter",
+                "reference": "master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nekoo\\": "src/Nekoo"
+                }
+            },
+            "time": "2012-04-10 01:21:47"
+        },
         {
             "name": "twig/twig",
             "version": "v1.27.0",
@@ -1374,7 +1390,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "christopherobin/eventemitter": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

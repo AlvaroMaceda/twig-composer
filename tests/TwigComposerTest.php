@@ -44,12 +44,6 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->configureTwig();
     }
 
-    public function testTrueIsTrue()
-    {
-        $foo = true;
-        $this->assertTrue($foo);
-    }
-
     public function testClassInstantiation()
     {
         $instance = new TwigComposer($this->twig);
@@ -93,6 +87,22 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig->render($template);
     }
 
+    public function testOnlyConfiguredTemplatesExecuteCallback()
+    {
+        $objectWithCallback = $this->createObjectWithMockMethods(['base_template_callback','index_template_callback']);
+
+        TwigComposer::on('base', [$objectWithCallback,'base_template_callback']);
+
+        $this->twig->render('base');
+
+        $objectWithCallback->expects($this->once())
+            ->method('base_template_callback');
+
+        $objectWithCallback->expects($this->never())
+            ->method('index_template_callback');
+
+    }
+
     public function providerTestAMethodIsCalledWhenTemplateRendered()
     {
         return array(
@@ -104,7 +114,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     public function providerTemplateList()
     {
         return array(
-            //array('base'),
+            array('base'),
             array('index')
         );
     }
