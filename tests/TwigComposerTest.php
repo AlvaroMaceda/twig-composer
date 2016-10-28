@@ -14,7 +14,6 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
 
     protected $twig;
     protected $callbackFunctionStub;
-    protected $objectWithACoupleOfMethodsStub;
     const STUB_OBJECT_FUNCTIONS = [
         'method1',
         'method2'
