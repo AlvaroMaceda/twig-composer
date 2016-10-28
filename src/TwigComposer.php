@@ -1,18 +1,14 @@
 <?php
 namespace TwigComposer;
-
+use \Nekoo\EventEmitter as EventEmitter;
 
 class TwigComposer extends \Twig_Template
 {
-    use \Nekoo\EventEmitter;
-    //use \EventEmitter;
-
-    public static $callable;
+    use EventEmitter;
 
     public function render(array $context)
     {
-        $callable = self::$callable;
-        if($callable) call_user_func($callable);
+        $this->emit($this->getTemplateName(), $context);
         return parent::render($context);
     }
 

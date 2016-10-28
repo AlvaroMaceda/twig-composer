@@ -5,20 +5,25 @@ use TwigComposer\TwigComposer;
 
 class TwigComposerTest extends \PHPUnit_Framework_TestCase
 {
+    const FIXTURES_DIRECTORY = 'tests/fixtures';
+
     protected $twig;
+
+    protected function loadRenderedFixture($rendered)
+    {
+        return file_get_contents(self::FIXTURES_DIRECTORY . DIRECTORY_SEPARATOR . $rendered);
+    }
 
     protected function configureTwig()
     {
-        $loader1 = new \Twig_Loader_Array(array(
-            'base' => '{% block content %}{% endblock %}',
+        $loader_file = new \Twig_Loader_Filesystem(self::FIXTURES_DIRECTORY);
+
+        $loader_memory = new \Twig_Loader_Array(array(
+            'index' => '{% extends "base.twig" %}{% block content %}Hello {{ name }}{% endblock %}',
         ));
 
-        $loader2 = new \Twig_Loader_Array(array(
-            'index' => '{% extends "base" %}{% block content %}Hello {{ name }}{% endblock %}',
-            'base'  => 'Will never be loaded',
-        ));
-
-        $loader = new \Twig_Loader_Chain(array($loader1, $loader2));
+        // The last have least priority in case of same name
+        $loader = new \Twig_Loader_Chain(array($loader_file, $loader_memory));
 
         $this->twig = new \Twig_Environment(
             $loader,
@@ -44,15 +49,37 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->configureTwig();
     }
 
+    function tearDown()
+    {
+        parent::tearDown();
+
+        $this->twig = null;
+    }
+
     public function testClassInstantiation()
     {
         $instance = new TwigComposer($this->twig);
         $this->assertNotNull($instance);
     }
 
-    public function testTemplateRenders()
+    /**
+     * @param string $template Template to be rendered
+     *
+     * @dataProvider providerTemplateRenders
+     */
+    public function testTemplateRenders($template,$expected)
     {
-        $this->twig->render('base');
+        $rendered = $this->twig->render($template);
+        $expected = $this->loadRenderedFixture($expected);
+        $this->assertEquals($expected,$rendered);
+    }
+
+    public function providerTemplateRenders()
+    {
+        return array(
+            array('base.twig','base.rendered.1'),
+            array('block.twig','block.rendered.1'),
+        );
     }
 
     /**
@@ -114,7 +141,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     public function providerTemplateList()
     {
         return array(
-            array('base'),
+            array('base.twig'),
             array('index')
         );
     }
