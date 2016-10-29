@@ -5,28 +5,16 @@ use TwigComposer\TwigComposer;
 
 // Used for testing function callbacks
 function callbackFunction($context) {
-    return TwigComposerTest::$functions->callbackFunction($context);
+    return TwigComposerTest::callbackFunction($context);
 }
 
-class foo
-{
-    public function tee($context)
-    {
-        var_dump($context);
-    }
-}
 
 class TwigComposerTest extends \PHPUnit_Framework_TestCase
 {
     const FIXTURES_DIRECTORY = 'tests/fixtures';
 
     protected $twig;
-    protected $callbackFunctionStub;
-    protected $objectWithACoupleOfMethodsStub;
-    const STUB_OBJECT_FUNCTIONS = [
-        'method1',
-        'method2'
-    ];
+    protected static $callbackFunctionMock;
 
     protected function loadRenderedFixture($rendered)
     {
@@ -53,16 +41,16 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
             ));
     }
 
-    protected function createStubObjectWithACoupleOfMethods($methods)
+    protected function createMockObjectWithACoupleOfMethods($methods)
     {
         return $this->getMockBuilder('stdClass')
                      ->setMethods($methods)
                      ->getMock();
     }
 
-    protected function callbackFunction($context)
+    public function callbackFunction($context)
     {
-        $this->callbackFunctionStub->callbackFunction();
+        self::$callbackFunctionMock->callbackFunction();
     }
 
     public function setUp()
@@ -70,8 +58,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
 
         $this->configureTwig();
-        $this->callbackFunctionStub = $this->createStubObjectWithACoupleOfMethods(['callbackFunction']);
-        $this->objectWithACoupleOfMethodsStub = $this->createStubObjectWithACoupleOfMethods(self::STUB_OBJECT_FUNCTIONS);
+        self::$callbackFunctionMock = $this->createMockObjectWithACoupleOfMethods(['callbackFunction']);
     }
 
     function tearDown()
@@ -79,7 +66,6 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         parent::tearDown();
 
         $this->twig = null;
-        $this->objectWithACoupleOfMethodsStub = null;
     }
 
     public function test_Class_Instantiates()
@@ -115,20 +101,62 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider providerTemplateList
      */
-    public function test_A_Callable_Method_Is_Called_When_Template_Renders($template)
+    public function test_A__Method_Is_Called_When_Template_Renders($template)
     {
-        $stub = $this->createStubObjectWithACoupleOfMethods(['method1','method2']);
+        $mock = $this->createMockObjectWithACoupleOfMethods(['method1','method2']);
 
-        TwigComposer::getNotifier()->on($template, [$stub,'method1']);
+        TwigComposer::getNotifier()->on($template, [$mock,'method1']);
 
-        $stub->expects($this->once())
+        $mock->expects($this->once())
             ->method('method1');
 
-        $stub->expects($this->never())
+        $mock->expects($this->never())
             ->method('method2');
 
         $this->twig->render($template);
     }
+
+    public function test_A_Function_Is_Called_When_Template_Renders()
+    {
+        $template = 'base.twig';
+
+        TwigComposer::getNotifier()->on($template, 'TwigComposerTests\callbackFunction');
+
+        self::$callbackFunctionMock->expects($this->once())
+            ->method('callbackFunction');
+
+        $this->twig->render($template);
+    }
+
+    // http://twig.sensiolabs.org/doc/templates.html#including-other-templates
+    // include -> {{ include('sidebar.html') }} (have access to the same context)
+    public function test_It_Notifies_When_Parent_Is_Rendered_And_We_Are_Listening_On_Included_Template()
+    {
+        $includes_template = 'includes.twig';
+        $included_template = 'included_template.twig';
+
+        $mock = $this->createMockObjectWithACoupleOfMethods(['method1','method2']);
+
+        $mock->expects($this->once())
+            ->method('method1');
+
+        TwigComposer::getNotifier()->on($included_template, [$mock,'method1']);
+
+        $this->twig->render($includes_template);
+    }
+
+
+//$this->markTestIncomplete(
+//'This test has not been implemented yet.'
+//);
+
+    // embed
+    // import
+
+    // extends -> {% extends "base.html" %} {% extends "base.html" %}
+
+    // For extends: This should be tested
+    // It's possible to render the contents of the parent block by using the parent function. This gives back the results of the parent block:
 
     public function providerTemplateList()
     {
