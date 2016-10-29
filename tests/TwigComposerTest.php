@@ -82,7 +82,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->objectWithACoupleOfMethodsStub = null;
     }
 
-    public function xtest_Class_Instantiates()
+    public function test_Class_Instantiates()
     {
         $instance = new TwigComposer($this->twig);
         $this->assertNotNull($instance);
@@ -94,7 +94,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider provider_Templates_Renders_As_Expected
      */
-    public function xtest_Template_Renders_As_Expected($template, $expected)
+    public function test_Template_Renders_As_Expected($template, $expected)
     {
         $rendered = $this->twig->render($template);
         $expected = $this->loadRenderedFixture($expected);
@@ -109,14 +109,6 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function test_foo()
-    {
-        $template = 'base.twig';
-        $foo = new foo();
-        TwigComposer::getNotifier()->on($template, [$foo,'tee']);
-        $this->twig->render($template);
-    }
-
     /**
      * @param string $template Template to be rendered
      * @param string/array $callable Callable to be executed
@@ -129,15 +121,13 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
 
         TwigComposer::getNotifier()->on($template, [$stub,'method1']);
 
-        $this->twig->render($template);
-
-        $stub->method1();
-
         $stub->expects($this->once())
             ->method('method1');
 
         $stub->expects($this->never())
             ->method('method2');
+
+        $this->twig->render($template);
     }
 
     public function providerTemplateList()
