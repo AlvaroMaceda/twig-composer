@@ -31,7 +31,7 @@ trait StaticEventEmitter
         /*
          * We need to check if class has been "initialized"
          * each time, because PHP does not have a method to
-         * initialize variables in a trait
+         * initialize class variables in a trait
          */
         if(!self::__se__isClassInitialized()) self::__se__initializeClass();
 
