@@ -166,16 +166,34 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig->render($embeds_template);
     }
 
-    // import
-    public function xtest_It_Notifies_IMPORT()
+    // "import" is used for macros: it should not notify when importing
+    public function test_It_Not_Notifies_Imported_Templates()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $imported_template = 'imported_template.twig';
+        $imports_template_all = 'imports_all_macros.twig';
+        $imports_template_individually = 'imports_macros_individually.twig';
+
+        $mock = $this->createMockObjectWithACoupleOfMethods(['imports_all','imports_individually','imported']);
+
+        TwigComposer::getNotifier()->on($imported_template, [$mock,'imported']);
+        TwigComposer::getNotifier()->on($imports_template_all, [$mock,'imports_all']);
+        TwigComposer::getNotifier()->on($imports_template_individually, [$mock,'imports_individually']);
+
+
+        $mock->expects($this->once())
+            ->method('imports_all');
+        $mock->expects($this->once())
+            ->method('imports_individually');
+        $mock->expects($this->never())
+            ->method('imported');
+
+        $this->twig->render($imports_template_individually);
+
+        $this->twig->render($imports_template_all);
     }
 
     // extends -> {% extends "base.html" %} {% extends "base.html" %}
-    public function test_It_Notifies_Extended_And_Extends_Templates_When_Rendering_A_Template_Which_Extends_Another()
+    public function test_It_Notifies_Extended_And_Extending_Templates_When_Rendering_A_Template_Which_Extends_Another()
     {
         $extended_template = 'extended_template.twig';
         $extends_template = 'extends.twig';
@@ -196,7 +214,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     }
 
     // It's possible to render the contents of the parent block by using the parent function.
-    public function test_It_Notifies_Only_Once_The_Parent_When_Using_Parent_Function_Multiple_Times()
+    public function test_It_Notifies_Only_Once_The_Parent_Template_When_Using_Parent_Function_Multiple_Times()
     {
         $extended_template = 'extended_template.twig';
         $extends_template = 'extends_using_parent.twig';
@@ -223,5 +241,15 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
             array('block.twig')
         );
     }
+
+/*
+    public function test_Template()
+    {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+            );
+    }
+*/
+
 
 }
