@@ -116,6 +116,14 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig->render($template);
     }
 
+    public function providerTemplateList()
+    {
+        return array(
+            array('base.twig'),
+            array('block.twig')
+        );
+    }
+
     public function test_A_Function_Is_Called_When_Template_Renders()
     {
         $template = 'base.twig';
@@ -146,7 +154,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     }
 
     // embed
-    public function test_It_Notifies_EMBED()
+    public function test_It_Notifies_Embeding_And_Embedded_Template_Only_Once()
     {
         $embedded_template = 'embedded_template.twig';
         $embeds_template = 'embeds.twig';
@@ -234,13 +242,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig->render($extends_template);
     }
 
-    public function providerTemplateList()
-    {
-        return array(
-            array('base.twig'),
-            array('block.twig')
-        );
-    }
+
 
 /*
     public function test_Template()

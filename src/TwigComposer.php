@@ -40,12 +40,33 @@ class TwigComposer extends \Twig_Template
         return parent::render($context);
     }
 
-    // We need to override this method, not render
+    // We need to extract the index from classname
+    // Example class name with index:
+    // '__TwigTemplate_cb5720da3b9950d085d8c7bac9eb9e1bc6959494c261857c9bb0aeee7a4dc287_10992';
+    // Example class name withouth index:
+    // '__TwigTemplate_cb5720da3b9950d085d8c7bac9eb9e1bc6959494c261857c9bb0aeee7a4dc287_10992';
+    protected function getIndex()
+    {
+        $classname = get_class($this);
+        $pattern = '/__TwigTemplate_([^_]*)(.*)/';
+        $coincidences = preg_match_all($pattern, $classname, $matches);
+        return $coincidences == 0 ? "" : $matches[2][0] ;
+    }
+
+    // If class have index, is part of the same template.
+    // We should notify only once, on the main template
+    protected function isEmbeddedSubclass()
+    {
+        $index = $this->getIndex();
+        return $index != "";
+    }
+
+    // We need to override this method, not render()
     // to be sure that extended templates emits events
     public function display(array $context, array $blocks = array())
     {
+        if(!$this->isEmbeddedSubclass()) $this->emitRenderingEvent($context);
         parent::display($context,$blocks);
-        $this->emitRenderingEvent($context);
     }
 
     // Never called: it's overriden in child-generated classes and
