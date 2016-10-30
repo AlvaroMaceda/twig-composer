@@ -1,0 +1,10 @@
+This is the template being rendered
+{% embed "embedded_template.twig" %}
+    {% block top %}
+        I'll override the top
+    {% endblock %}
+    {% block middle %}
+        And the middle
+    {% endblock %}
+{% endembed %}
+But not the bottom

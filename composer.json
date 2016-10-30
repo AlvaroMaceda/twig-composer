@@ -1,12 +1,40 @@
 {
     "name": "maceda/twig-composer",
     "require": {
-        "twig/twig": "^1.27"
+        "twig/twig": "^1.27",
+        "christopherobin/EventEmitter": "dev-master"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "TwigComposer\\": "src/"
+        }
     },
     "authors": [
         {
             "name": "Alvaro Maceda",
             "email": "alvaro@alvaromaceda.es"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "christopherobin/EventEmitter",
+                "version": "dev-master",
+                "source": {
+                    "url": "https://github.com/christopherobin/EventEmitter",
+                    "type": "git",
+                    "reference": "master"
+                },
+                "autoload": {
+                    "psr-4" : {
+                        "Nekoo\\" : "src/Nekoo"
+                    }
+                }
+            }
         }
     ]
 }

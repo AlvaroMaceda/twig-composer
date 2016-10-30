@@ -1,0 +1,4 @@
+{% from 'imported_template.twig' import macro1 %}
+{% from 'imported_template.twig' import macro2 as macro_2 %}
+Calling macro1: {{ macro1('m1','m2') }}
+Calling macro2: {{ macro_2('m3') }}

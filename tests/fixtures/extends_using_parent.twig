@@ -1,0 +1,11 @@
+{% extends "extended_template.twig" %}
+
+{% block first %}
+    Hi, I'm extending this
+    {{ parent() }}
+{% endblock %}
+
+{% block second %}
+    And this too
+    {{ parent() }}
+{% endblock %}
