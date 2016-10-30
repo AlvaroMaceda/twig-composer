@@ -146,11 +146,24 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
     }
 
     // embed
-    public function xtest_It_Notifies_EMBED()
+    public function test_It_Notifies_EMBED()
     {
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $embedded_template = 'embedded_template.twig';
+        $embeds_template = 'embeds.twig';
+
+        $mock_embedded = $this->createMockObjectWithACoupleOfMethods(['embedded']);
+        $mock_embeds = $this->createMockObjectWithACoupleOfMethods(['embeds']);
+
+        $mock_embedded->expects($this->once())
+            ->method('embedded');
+
+        $mock_embeds->expects($this->once())
+            ->method('embeds');
+
+        TwigComposer::getNotifier()->on($embedded_template, [$mock_embedded,'embedded']);
+        TwigComposer::getNotifier()->on($embeds_template, [$mock_embeds,'embeds']);
+
+        $this->twig->render($embeds_template);
     }
 
     // import
@@ -176,14 +189,13 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $mock_extends->expects($this->once())
             ->method('extends');
 
-        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
         TwigComposer::getNotifier()->on($extended_template, [$mock_extended,'extended']);
+        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
 
         $this->twig->render($extends_template);
     }
 
-    // For extends: This should be tested
-    // It's possible to render the contents of the parent block by using the parent function. This gives back the results of the parent block:
+    // It's possible to render the contents of the parent block by using the parent function.
     public function test_It_Notifies_Only_Once_The_Parent_When_Using_Parent_Function_Multiple_Times()
     {
         $extended_template = 'extended_template.twig';
@@ -198,8 +210,8 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $mock_extends->expects($this->once())
             ->method('extends');
 
-        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
         TwigComposer::getNotifier()->on($extended_template, [$mock_extended,'extended']);
+        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
 
         $this->twig->render($extends_template);
     }
