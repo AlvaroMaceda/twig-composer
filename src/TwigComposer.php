@@ -34,10 +34,18 @@ class TwigComposer extends \Twig_Template
         $this->emit($event, $this->getTemplateName(), $context);
     }
 
+    // TODO: Delete after all tests pass
     public function render(array $context)
     {
-        $this->emitRenderingEvent($context);
         return parent::render($context);
+    }
+
+    // We need to override this method, not render
+    // to be sure that extended templates emits events
+    public function display(array $context, array $blocks = array())
+    {
+        parent::display($context,$blocks);
+        $this->emitRenderingEvent($context);
     }
 
     // Never called: it's overriden in child-generated classes and

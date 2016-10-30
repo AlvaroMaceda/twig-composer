@@ -68,7 +68,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig = null;
     }
 
-    public function test_Class_Instantiates()
+    public function xtest_Class_Instantiates()
     {
         $instance = new TwigComposer($this->twig);
         $this->assertNotNull($instance);
@@ -80,7 +80,7 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider provider_Templates_Renders_As_Expected
      */
-    public function test_Template_Renders_As_Expected($template, $expected)
+    public function xtest_Template_Renders_As_Expected($template, $expected)
     {
         $rendered = $this->twig->render($template);
         $expected = $this->loadRenderedFixture($expected);
@@ -145,18 +145,64 @@ class TwigComposerTest extends \PHPUnit_Framework_TestCase
         $this->twig->render($includes_template);
     }
 
-
-//$this->markTestIncomplete(
-//'This test has not been implemented yet.'
-//);
-
     // embed
+    public function xtest_It_Notifies_EMBED()
+    {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
+
     // import
+    public function xtest_It_Notifies_IMPORT()
+    {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
+    }
 
     // extends -> {% extends "base.html" %} {% extends "base.html" %}
+    public function test_It_Notifies_Extended_And_Extends_Templates_When_Rendering_A_Template_Which_Extends_Another()
+    {
+        $extended_template = 'extended_template.twig';
+        $extends_template = 'extends.twig';
+
+        $mock_extended = $this->createMockObjectWithACoupleOfMethods(['extended']);
+        $mock_extends = $this->createMockObjectWithACoupleOfMethods(['extends']);
+
+        $mock_extended->expects($this->once())
+            ->method('extended');
+
+        $mock_extends->expects($this->once())
+            ->method('extends');
+
+        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
+        TwigComposer::getNotifier()->on($extended_template, [$mock_extended,'extended']);
+
+        $this->twig->render($extends_template);
+    }
 
     // For extends: This should be tested
     // It's possible to render the contents of the parent block by using the parent function. This gives back the results of the parent block:
+    public function test_It_Notifies_Only_Once_The_Parent_When_Using_Parent_Function_Multiple_Times()
+    {
+        $extended_template = 'extended_template.twig';
+        $extends_template = 'extends_using_parent.twig';
+
+        $mock_extended = $this->createMockObjectWithACoupleOfMethods(['extended']);
+        $mock_extends = $this->createMockObjectWithACoupleOfMethods(['extends']);
+
+        $mock_extended->expects($this->once())
+            ->method('extended');
+
+        $mock_extends->expects($this->once())
+            ->method('extends');
+
+        TwigComposer::getNotifier()->on($extends_template, [$mock_extends,'extends']);
+        TwigComposer::getNotifier()->on($extended_template, [$mock_extended,'extended']);
+
+        $this->twig->render($extends_template);
+    }
 
     public function providerTemplateList()
     {
