@@ -2,11 +2,15 @@
 namespace TwigComposer;
 
 use \Nekoo\EventEmitter as EventEmitter;
+use \Nekoo\EventEmitterInterface as EventEmitterInterface;
 
 class TwigComposer extends \Twig_Template
 {
     use EventEmitter;
 
+    /**
+     * @var EventEmitter
+     */
     protected static $global_notifier;
 
     static function getNotifier()
@@ -15,10 +19,16 @@ class TwigComposer extends \Twig_Template
         return static::$global_notifier;
     }
 
+    // To facilitate tests when this class is used
+    static function setNotifier(EventEmitterInterface $notifier)
+    {
+        static::$global_notifier = $notifier;
+    }
+
     /**
      * Constructor.
      *
-     * @param Twig_Environment $env A Twig_Environment instance
+     * @param \Twig_Environment $env A Twig_Environment instance
      */
     public function __construct(\Twig_Environment $env)
     {
@@ -34,17 +44,11 @@ class TwigComposer extends \Twig_Template
         $this->emit($event, $this->getTemplateName(), $context);
     }
 
-    // TODO: Delete after all tests pass
-    public function render(array $context)
-    {
-        return parent::render($context);
-    }
-
     // We need to extract the index from classname
     // Example class name with index:
     // '__TwigTemplate_cb5720da3b9950d085d8c7bac9eb9e1bc6959494c261857c9bb0aeee7a4dc287_10992';
     // Example class name withouth index:
-    // '__TwigTemplate_cb5720da3b9950d085d8c7bac9eb9e1bc6959494c261857c9bb0aeee7a4dc287_10992';
+    // '__TwigTemplate_cb5720da3b9950d085d8c7bac9eb9e1bc6959494c261857c9bb0aeee7a4dc287';
     protected function getIndex()
     {
         $classname = get_class($this);
