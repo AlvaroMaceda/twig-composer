@@ -1,6 +1,18 @@
 # Twig Composer
- 
-A callback function library for Twig: you can execute code when templates are rendered.
+
+A callback function library for Twig: you will be able to execute code when templates are rendered.
+
+Useful for calling code like controllers, etc. before the template is rendered. This can be
+done in some frameworks as Symfony or Laravel, but this library works directly with Twig.
+
+For example, if you have a ```menu.twig``` template which can be included in a layout, you can do:
+
+```
+    TwigComposer::getNotifier()->on('menu.twig', [$menuService,generateDinamicMenu]);
+```
+
+And then use the menu generated in ```menu.twig``` template. You won't need to include a call to
+the service in each controller which uses the layout.
 
 ## Getting Started
 
@@ -25,49 +37,44 @@ array(
 ));
 ```
 
-You can also inherit your own base class from TwigComposer if you need to use your own base class for Twig (do not
-forget to call parent methods when corresponding)
-
 To receive callbacks you must register them for each template you want to be notified:
 
 ```
 TwigComposer::getNotifier()->on('Template_I_Want_To_Watch', $callback);
 ```
 
-$callback will be called each time 'Template_I_Want_To_Watch' is rendered.
+```$callback``` will be called each time ```'Template_I_Want_To_Watch'``` is rendered.
 
-### Prerequisites
-
-TwigComposer is a library to be notified of Twig template renders, so it requires Twig to
-be installed and running.
+You can also inherit your own base class from TwigComposer if you need to use your own base class for Twig (do not
+forget to call parent methods when corresponding)
 
 ### Installation
 
-TO-DO
+If you do not use composer, you must install and require the following dependencies:
 
-Como instalar eventemitter
+- [christopherobin/EventEmitter][christopherobin/EventEmitter]
+- [Twig][twig]
 
-, you must include ```Relayer.php``` and ```TwigComposer.php``` in your project. TwigComposer requires
-Twig, so it must be installed / included before using TwigComposer. To install Twig please follow
-the instructions provided in that library.
-
+You must also include ```Relayer.php``` and ```TwigComposer.php``` in your project to use this library.
 
 ## Running the tests
 
-TODO: Explain how to run the automated tests for this system
+This library uses PHPUnit for test. To run the test, execute this command:
+```
+/usr/bin/php ./vendor/phpunit/phpunit/phpunit ./tests
+```
+
+If you want to generate code coverage information, just add the option ```--coverage-html DIRECTORY```
 
 ## Contributing
 
 Feel free to contribute to this code. Please send an email to the authors and / or
 a pull request to the project's repository: https://github.com/AlvaroMaceda/twig-composer
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-* **Alvaro Maceda** - *Initial work* - [AlvaroMaceda](http://alvaromaceda.es)
+* **[Alvaro Maceda][AlvaroMaceda]** - *Initial work*
 
 ## License
 
@@ -75,6 +82,11 @@ This project is Public Domain.
 
 ## Acknowledgments
 
-* EMMITER
+* Thanks to [Christophe Robin][christopherobin] for his port of [event emmiter][christopherobin/EventEmitter] to PHP
 * Inspired by View::composer feature of Laravel
 
+
+[AlvaroMaceda]: <http://alvaromaceda.es>
+[christopherobin/EventEmitter]: <http://daringfireball.net/projects/markdown/>
+[christopherobin]: <https://github.com/christopherobin>
+[twig]: <http://twig.sensiolabs.org/>
