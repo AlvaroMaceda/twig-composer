@@ -1,5 +1,10 @@
 {
     "name": "maceda/twig-composer",
+    "type": "library",
+    "description": "Callback library for Twig",
+    "keywords": ["twig","callbacks"],
+    "homepage": "https://github.com/AlvaroMaceda/twig-composer",
+    "license": "Public Domain",
     "require": {
         "twig/twig": "^1.27",
         "christopherobin/EventEmitter": "dev-master"
