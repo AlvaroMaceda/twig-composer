@@ -5,6 +5,11 @@ use \Nekoo\EventEmitter as EventEmitter;
 class EmitterRelayer
 {
     use EventEmitter;
+    public $id = 0;
+    public function __construct()
+    {
+        $this->id = rand(1,1000);
+    }
 }
 
 trait StaticEventEmitter
@@ -18,12 +23,12 @@ trait StaticEventEmitter
 
     protected static function __se__initializeClass()
     {
-        self::$__se__emitter = new EmitterRelayer();
+        static::$__se__emitter = new EmitterRelayer();
     }
 
     protected static function __se__isClassInitialized()
     {
-        return !is_null(self::$__se__emitter);
+        return !is_null(static::$__se__emitter);
     }
 
     protected static function __se__callAMethodOfTheEmitter()
@@ -33,11 +38,11 @@ trait StaticEventEmitter
          * each time, because PHP does not have a method to
          * initialize class variables in a trait
          */
-        if(!self::__se__isClassInitialized()) self::__se__initializeClass();
+        if(!static::__se__isClassInitialized()) static::__se__initializeClass();
 
         $args = func_get_args();
         $method = array_shift($args);
-        return call_user_func_array([self::$__se__emitter,$method], $args);
+        return call_user_func_array([static::$__se__emitter,$method], $args);
     }
 
     /* -------------------------------------------------------------------------
@@ -46,7 +51,7 @@ trait StaticEventEmitter
 
     public static function setMaxListeners($value)
     {
-        self::__se__callAMethodOfTheEmitter('setMaxListeners',$value);
+        static::__se__callAMethodOfTheEmitter('setMaxListeners',$value);
     }
 
     // This function admits variable parameters
@@ -56,7 +61,7 @@ trait StaticEventEmitter
 
     public static function on($event, callable $handler)
     {
-        return self::__se__callAMethodOfTheEmitter('on',$event,$handler);
+        return static::__se__callAMethodOfTheEmitter('on',$event,$handler);
     }
 
     // This function admits variable parameters
@@ -66,15 +71,15 @@ trait StaticEventEmitter
     }
 
     public static function all(callable $handler) {
-        self::__se__callAMethodOfTheEmitter('all',$handler);
+        static::__se__callAMethodOfTheEmitter('all',$handler);
     }
 
     public static function once($event, callable $handler) {
-        return self::__se__callAMethodOfTheEmitter('once',$event,$handler);
+        return static::__se__callAMethodOfTheEmitter('once',$event,$handler);
     }
 
     public static function off($event, callable $handler) {
-        return self::__se__callAMethodOfTheEmitter('off',$event,$handler);
+        return static::__se__callAMethodOfTheEmitter('off',$event,$handler);
     }
 
     // This function admits variable parameters
@@ -83,10 +88,10 @@ trait StaticEventEmitter
     }
 
     public static function removeAllListeners($event = null) {
-        return self::__se__callAMethodOfTheEmitter('removeAllListeners',$event);
+        return static::__se__callAMethodOfTheEmitter('removeAllListeners',$event);
     }
 
     public static function getListeners($event) {
-        return self::__se__callAMethodOfTheEmitter('getListeners',$event);
+        return static::__se__callAMethodOfTheEmitter('getListeners',$event);
     }
 }

@@ -42,7 +42,7 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
 
             static function emitSomething($event,$data)
             {
-                self::emit($event,$data);
+                static::emit($event,$data);
             }
         };
     }
@@ -73,11 +73,11 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
         ];
 
         ($this->AClassWithTheTrait)::on('event',$callables[0]);
-        $listeners = $this->AClassWithTheTrait::getListeners('event');
+        $listeners = ($this->AClassWithTheTrait)::getListeners('event');
         $this->assertEquals($listeners[0],$callables[0]);
 
         ($this->AClassWithTheTrait)::on('event',$callables[1]);
-        $listeners = $this->AClassWithTheTrait::getListeners('event');
+        $listeners = ($this->AClassWithTheTrait)::getListeners('event');
         $this->assertEquals($listeners,$callables,"\$canonicalize = true"); // canonicalize: Undocumented parameter so it does not check order of elements
     }
 
@@ -91,12 +91,12 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
             }
         ];
 
-        $this->AClassWithTheTrait::addListener('event',$callables[0]);
-        $listeners = $this->AClassWithTheTrait::getListeners('event');
+        ($this->AClassWithTheTrait)::addListener('event',$callables[0]);
+        $listeners = ($this->AClassWithTheTrait)::getListeners('event');
         $this->assertEquals($listeners[0],$callables[0]);
 
-        $this->AClassWithTheTrait::addListener('event',$callables[1]);
-        $listeners = $this->AClassWithTheTrait::getListeners('event');
+        ($this->AClassWithTheTrait)::addListener('event',$callables[1]);
+        $listeners = ($this->AClassWithTheTrait)::getListeners('event');
         $this->assertEquals($listeners,$callables,"\$canonicalize = true"); // canonicalize: Undocumented parameter so it does not check order of elements
     }
 
@@ -112,14 +112,14 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
 
     public function test_It_Can_Not_Register_More_Listener_Than_MaxListeners()
     {
-        $this->AClassWithTheTrait::setMaxListeners(3);
-        $this->AClassWithTheTrait::on('whatever',function(){});
-        $this->AClassWithTheTrait::on('whatever',function(){});
-        $this->AClassWithTheTrait::on('otherevent',function(){});
-        $this->AClassWithTheTrait::on('whatever',function(){});
+        ($this->AClassWithTheTrait)::setMaxListeners(3);
+        ($this->AClassWithTheTrait)::on('whatever',function(){});
+        ($this->AClassWithTheTrait)::on('whatever',function(){});
+        ($this->AClassWithTheTrait)::on('otherevent',function(){});
+        ($this->AClassWithTheTrait)::on('whatever',function(){});
 
         $this->expectException ( \Exception :: class ) ;
-        $this->AClassWithTheTrait::on('whatever',function(){});
+        ($this->AClassWithTheTrait)::on('whatever',function(){});
     }
 
     public function xtest_It_Emitts_Events()
@@ -130,7 +130,7 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
 
     public function xtestPRUEBA()
     {
-        $this->AClassWithTheTrait::setMaxListeners(10);
+        ($this->AClassWithTheTrait)::setMaxListeners(10);
     }
 
 }
