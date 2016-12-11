@@ -33,18 +33,27 @@ class StaticEventEmitterTest extends \PHPUnit_Framework_TestCase
             ->getMock();
     }
 
+
     protected function createAClassWithTheTrait()
     {
-        // This does not work: it allways return the same class
-        return new class
-        {
-            use StaticEventEmitter; // This is NOT an error: it works
+        $class = null;
+        // We need to use a random number because, if not, PHP creates the same class if the code is the same.
+        // With a random number and microtime it is supossed we always will have different code
+        // and the returned class will be a new one.
+        $stamp = microtime().random_int(PHP_INT_MIN ,PHP_INT_MAX);
+        $classcode = <<< EOT
+        \$class = new class {
+            use TwigComposer\StaticEventEmitter; // This is NOT an error: it works
 
-            static function emitSomething($event,$data)
+            static function emitSomething(\$event,\$data)
             {
-                static::emit($event,$data);
+                static::emit(\$event,\$data);
             }
+            public static \$differentiate='$stamp';
         };
+EOT;
+        eval($classcode);
+        return $class;
     }
 
     public function setUp()
